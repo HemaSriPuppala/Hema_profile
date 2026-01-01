@@ -1,5 +1,5 @@
-// Smooth scrolling for navigation links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+// Smooth scrolling for navigation links (excluding resume button)
+document.querySelectorAll('a[href^="#"]:not([id="resumeBtn"])').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
         const target = document.querySelector(this.getAttribute('href'));
@@ -12,138 +12,227 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Terminal functionality
-const devModeBtn = document.getElementById('devModeBtn');
-const terminalModal = document.getElementById('terminalModal');
-const closeTerminal = document.getElementById('closeTerminal');
-const terminalInput = document.getElementById('terminalInput');
-const terminalBody = document.getElementById('terminalBody');
+// Floating Chat Bot functionality
+const floatingChatBot = document.getElementById('floatingChatBot');
+const chatBotHeader = document.getElementById('chatBotHeader');
+const chatBotToggle = document.getElementById('chatBotToggle');
+const chatBotBody = document.getElementById('chatBotBody');
+const floatingChatInput = document.getElementById('floatingChatInput');
+const floatingChatSend = document.getElementById('floatingChatSend');
+const floatingChatMessages = document.getElementById('floatingChatMessages');
 
-// Open terminal
-devModeBtn.addEventListener('click', () => {
-    terminalModal.classList.add('active');
-    terminalInput.focus();
+// Show floating chat bot by default after a short delay
+setTimeout(() => {
+    floatingChatBot.classList.add('visible');
+}, 2000);
+
+// Toggle chat bot body (minimize/maximize)
+chatBotToggle.addEventListener('click', () => {
+    chatBotBody.classList.toggle('minimized');
+    chatBotToggle.textContent = chatBotBody.classList.contains('minimized') ? '+' : '−';
 });
 
-// Close terminal
-closeTerminal.addEventListener('click', () => {
-    terminalModal.classList.remove('active');
-});
-
-// Close terminal on outside click
-terminalModal.addEventListener('click', (e) => {
-    if (e.target === terminalModal) {
-        terminalModal.classList.remove('active');
+// Click header to toggle chat bot visibility
+chatBotHeader.addEventListener('click', (e) => {
+    if (e.target !== chatBotToggle) {
+        if (floatingChatBot.classList.contains('visible')) {
+            floatingChatBot.classList.remove('visible');
+        } else {
+            floatingChatBot.classList.add('visible');
+            floatingChatInput.focus();
+        }
     }
 });
 
-// Terminal commands
-const commands = {
+// Chat bot responses
+const chatResponses = {
     help: () => {
-        return `Available commands:
-  help          - Show this help message
-  about         - About Hema Sri Puppala
-  skills        - Display technical skills
-  projects      - Show featured projects
-  contact       - Display contact information
-  clear         - Clear terminal
-  resume        - Download resume
-  exit          - Close terminal`;
+        return `I can help you learn about Hema! Here's what I can tell you about:
+
+• **about** - Learn about Hema's background and passion
+• **skills** - Explore her technical expertise
+• **projects** - Discover her featured projects
+• **contact** - Get her contact information
+• **resume** - View and download her resume
+
+Just ask me anything or use these keywords!`;
     },
     about: () => {
-        return `Hema Sri Puppala
-Software Developer
+        return `👋 **About Hema Sri Puppala**
 
-Passionate about building scalable applications and solving complex problems.`;
+Hema is a passionate Software Developer with a strong background in security and full-stack development. She recently completed her Master's in Computer Science from The University of Texas at Arlington and has hands-on experience in web application security.
+
+🔐 **Security Focus**: Experienced in OWASP practices, vulnerability assessment, and secure coding
+💻 **Full-Stack Skills**: Proficient in Python, JavaScript, React, Django, and modern web technologies
+🤖 **AI Enthusiast**: Works with LLMs, RAG systems, and AI-powered applications
+
+She's always eager to take on new challenges and build secure, scalable solutions!`;
     },
     skills: () => {
-        return `Technical Skills:
-- Frontend: React, JavaScript, HTML5, CSS3, TypeScript
-- Backend: Node.js, Python, Django, MongoDB, PostgreSQL
-- Cloud & Tools: Git, Docker, AWS, Azure, AI/ML`;
+        return `🛠️ **Technical Skills**
+
+**Languages**: Python, JavaScript/TypeScript, SQL, Java, C++
+**Frameworks**: Django, FastAPI, Node.js, Express, React, Next.js
+**Databases**: PostgreSQL, SQLite, Redis, MongoDB, MySQL, Firebase
+**AI/LLM**: OpenAI API, LLMs, RAG, Embeddings, Prompt Engineering, LangChain
+**Security**: OWASP Top 10, Input Validation, Auth Security, SCA
+**Cloud/DevOps**: Docker, GitHub Actions, Azure, AWS, Linux, Git, CI/CD
+
+Hema combines security expertise with modern development practices!`;
     },
     projects: () => {
-        return `Featured Projects:
-1. Project Name - Description
-2. Project Name - Description
-3. Project Name - Description
-4. Project Name - Description
+        return `🚀 **Featured Projects**
 
-Visit the Projects section to learn more.`;
+**1. FinAI** - AI-Powered Financial Analysis Platform
+• Built with Django, PostgreSQL, Docker, Azure
+• Features portfolio tracking, stock analysis, and AI insights
+• [GitHub: FinaiWorld](https://github.com/FinaiWorld)
+
+**2. Tudu** - AI Smart Task Planner
+• React + Django with JWT authentication
+• AI-assisted planning and Google Maps integration
+• [GitHub: TuduSmartPlanner](https://github.com/TuduSmartPlanner)
+
+**3. Atharva** - AI + IoT Smart Farming Platform
+• Combines crop recommendations with IoT monitoring
+• Marketplace for direct farmer-to-consumer sales
+• [GitHub: Atharva-AgriTech](https://github.com/Atharva-AgriTech)
+
+Each project showcases her expertise in AI, security, and full-stack development!`;
     },
     contact: () => {
-        return `Contact Information:
-Email: your.email@example.com
-Phone: +1 (234) 567-8900
-Location: City, State, Country`;
-    },
-    clear: () => {
-        const lines = terminalBody.querySelectorAll('.terminal-line');
-        lines.forEach(line => line.remove());
-        return '';
+        return `📬 **Let's Connect!**
+
+📧 **Email**: puppalahemasri23@gmail.com
+📱 **Phone**: +1 (469) 822-0771
+📍 **Location**: Dallas, Texas
+
+Hema is always interested in new opportunities and exciting projects. Feel free to reach out for collaborations, job opportunities, or just to chat about technology!`;
     },
     resume: () => {
-        return 'Resume download initiated...';
-    },
-    exit: () => {
-        terminalModal.classList.remove('active');
-        return '';
+        window.open('HemaSri_CV.pdf', '_blank');
+        return `📄 **Resume opened!** Your resume is now opening in a new tab where you can view and download it.`;
     }
 };
 
-// Handle terminal input
-terminalInput.addEventListener('keypress', (e) => {
+// Add message to floating chat
+function addFloatingMessage(content, isBot = false) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `floating-message ${isBot ? 'bot-message' : 'user-message'}`;
+    
+    if (isBot) {
+        messageDiv.innerHTML = `
+            <span class="floating-message-avatar">🤖</span>
+            <div class="floating-message-content">
+                <p>${content}</p>
+            </div>
+        `;
+    } else {
+        messageDiv.innerHTML = `
+            <div class="floating-message-content">
+                <p>${content}</p>
+            </div>
+            <span class="floating-message-avatar">👤</span>
+        `;
+    }
+    
+    floatingChatMessages.appendChild(messageDiv);
+    floatingChatMessages.scrollTop = floatingChatMessages.scrollHeight;
+}
+
+// Handle floating chat input
+function handleFloatingChatInput() {
+    const userInput = floatingChatInput.value.trim();
+    if (!userInput) return;
+    
+    // Add user message
+    addFloatingMessage(userInput, false);
+    floatingChatInput.value = '';
+    
+    // Process user input (same logic as before)
+    const lowerInput = userInput.toLowerCase();
+    let response = '';
+    
+    if (lowerInput.includes('help') || lowerInput.includes('what can you do')) {
+        response = chatResponses.help();
+    } else if (lowerInput.includes('about') || lowerInput.includes('who is hema') || lowerInput.includes('background')) {
+        response = chatResponses.about();
+    } else if (lowerInput.includes('skill') || lowerInput.includes('technology') || lowerInput.includes('technical')) {
+        response = chatResponses.skills();
+    } else if (lowerInput.includes('project') || lowerInput.includes('work') || lowerInput.includes('portfolio')) {
+        response = chatResponses.projects();
+    } else if (lowerInput.includes('contact') || lowerInput.includes('reach') || lowerInput.includes('email') || lowerInput.includes('phone')) {
+        response = chatResponses.contact();
+    } else if (lowerInput.includes('resume') || lowerInput.includes('cv')) {
+        response = chatResponses.resume();
+    } else if (lowerInput.includes('hello') || lowerInput.includes('hi') || lowerInput.includes('hey')) {
+        response = `Hello! 👋 I'm Hema's AI assistant. I'm here to help you learn about her background, skills, and experience. What would you like to know?`;
+    } else {
+        response = `I'm not sure about that specific question, but I can help you with:
+
+• Learning about Hema's background and experience
+• Exploring her technical skills and expertise
+• Discovering her featured projects
+• Getting her contact information
+• Viewing her resume
+
+What would you like to know about?`;
+    }
+    
+    // Add bot response with a slight delay
+    setTimeout(() => {
+        addFloatingMessage(response, true);
+    }, 500);
+}
+
+// Floating chat input event listeners
+floatingChatInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
-        const command = terminalInput.value.trim().toLowerCase();
-        terminalInput.value = '';
-        
-        // Add command line to terminal
-        const commandLine = document.createElement('div');
-        commandLine.className = 'terminal-line';
-        commandLine.innerHTML = `<span class="terminal-prompt">hema@portfolio:\~$</span><span class="terminal-text">${command}</span>`;
-        terminalBody.insertBefore(commandLine, terminalBody.lastElementChild);
-        
-        // Execute command
-        let output = '';
-        if (commands[command]) {
-            output = commands[command]();
-        } else if (command === '') {
-            output = '';
-        } else {
-            output = `Command not found: ${command}. Type 'help' for available commands.`;
-        }
-        
-        // Add output if any
-        if (output) {
-            const outputLine = document.createElement('div');
-            outputLine.className = 'terminal-line';
-            outputLine.innerHTML = `<span class="terminal-text">${output}</span>`;
-            terminalBody.insertBefore(outputLine, terminalBody.lastElementChild);
-        }
-        
-        // Scroll to bottom
-        terminalBody.scrollTop = terminalBody.scrollHeight;
+        handleFloatingChatInput();
     }
 });
 
-// Close terminal with Escape key
+floatingChatSend.addEventListener('click', handleFloatingChatInput);
+
+// Floating quick reply buttons
+document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('floating-quick-reply')) {
+        const command = e.target.dataset.command;
+        floatingChatInput.value = command;
+        handleFloatingChatInput();
+    }
+});
+
+// Close modals with Escape key
 document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && terminalModal.classList.contains('active')) {
-        terminalModal.classList.remove('active');
+    if (e.key === 'Escape') {
+        if (floatingChatBot.classList.contains('visible')) {
+            floatingChatBot.classList.remove('visible');
+        }
     }
 });
 
 // Navbar scroll effect
 let lastScroll = 0;
 const navbar = document.querySelector('.navbar');
+const navLogo = document.querySelector('.nav-logo');
 
 window.addEventListener('scroll', () => {
     const currentScroll = window.pageYOffset;
+    const heroSection = document.querySelector('#home');
+    const heroHeight = heroSection ? heroSection.offsetHeight : 600;
     
     if (currentScroll > 100) {
-        navbar.style.backgroundColor = 'rgba(10, 10, 10, 0.95)';
+        navbar.style.backgroundColor = 'rgba(252, 231, 243, 0.95)';
     } else {
-        navbar.style.backgroundColor = 'rgba(10, 10, 10, 0.9)';
+        navbar.style.backgroundColor = 'rgba(252, 231, 243, 0.8)';
+    }
+    
+    // Show/hide logo based on scroll position
+    if (currentScroll > heroHeight * 0.7) {
+        navLogo.classList.add('visible');
+    } else {
+        navLogo.classList.remove('visible');
     }
     
     lastScroll = currentScroll;
@@ -203,19 +292,5 @@ if (heroBackground) {
     heroBackground.style.transform = 'none';
     heroBackground.style.background = 'transparent';
 }
-                    startY: particleY,
-                    targetX: particleX + explosionX + randomX,
-                    targetY: particleY + explosionY + randomY,
-                    color: `rgba(${r}, ${g}, ${b}, ${a / 255})`,
-                    originalColor: { r: originalR, g: originalG, b: originalB },
-                    size: pixelSize * (0.5 + Math.random() * 1.0),
-                    startSize: pixelSize * (0.5 + Math.random() * 1.0),
-                    speed: 0.008 + Math.random() * 0.025,
-                    progress: 0,
-                    delay: Math.random() * 1.0, // Staggered disappearance
-                    rotation: Math.random() * Math.PI * 2,
-                    rotationSpeed: (Math.random() - 0.5) * 0.3,
-                    gravity: 0.2 + Math.random() * 0.3,
-                    fadeStart: 0.3 + Math.random() * 0.4, // When to start fading
 
 
