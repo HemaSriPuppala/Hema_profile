@@ -54,6 +54,9 @@ const chatResponses = {
 • **projects** - Discover her featured projects
 • **contact** - Get her contact information
 • **resume** - View and download her resume
+• **github** - Visit her GitHub profile 🚀
+• **linkedin** - Connect on LinkedIn 💼
+• **email** - Send her an email ✉️
 
 Just ask me anything or use these keywords!`;
     },
@@ -86,17 +89,17 @@ Hema combines security expertise with modern development practices!`;
 **1. FinAI** - AI-Powered Financial Analysis Platform
 • Built with Django, PostgreSQL, Docker, Azure
 • Features portfolio tracking, stock analysis, and AI insights
-• [GitHub: FinaiWorld](https://github.com/FinaiWorld)
+• GitHub: FinaiWorld
 
 **2. Tudu** - AI Smart Task Planner
 • React + Django with JWT authentication
 • AI-assisted planning and Google Maps integration
-• [GitHub: TuduSmartPlanner](https://github.com/TuduSmartPlanner)
+• GitHub: TuduSmartPlanner
 
 **3. Atharva** - AI + IoT Smart Farming Platform
 • Combines crop recommendations with IoT monitoring
 • Marketplace for direct farmer-to-consumer sales
-• [GitHub: Atharva-AgriTech](https://github.com/Atharva-AgriTech)
+• GitHub: Atharva-AgriTech
 
 Each project showcases her expertise in AI, security, and full-stack development!`;
     },
@@ -107,7 +110,83 @@ Each project showcases her expertise in AI, security, and full-stack development
 📱 **Phone**: +1 (469) 822-0771
 📍 **Location**: Dallas, Texas
 
+💼 **Quick Actions**:
+🔗 Type "github" to visit my GitHub profile
+💼 Type "linkedin" to connect on LinkedIn
+✉️ Type "email" to send me a message
+
 Hema is always interested in new opportunities and exciting projects. Feel free to reach out for collaborations, job opportunities, or just to chat about technology!`;
+    },
+    github: () => {
+        setTimeout(() => {
+            window.open('https://github.com/HemaSriPuppala', '_blank');
+        }, 1000);
+        return `🚀 **Redirecting to GitHub!**
+
+✨ Taking you to Hema's GitHub profile where you can explore:
+
+🔍 **Featured Repositories**:
+• FinAI - AI-Powered Financial Platform
+• Tudu - Smart Task Planner
+• Atharva - IoT Smart Farming Platform
+
+💻 **What you'll find**:
+• 20+ repositories showcasing full-stack development
+• AI/ML projects with real-world applications
+• Security-focused development practices
+• Clean, well-documented code
+
+🌟 Don't forget to star the repositories you find interesting!
+
+*Opening in 1 second...*`;
+    },
+    linkedin: () => {
+        setTimeout(() => {
+            window.open('https://www.linkedin.com/in/hema-sri-puppala/', '_blank');
+        }, 1000);
+        return `💼 **Connecting on LinkedIn!**
+
+✨ Taking you to Hema's LinkedIn profile to:
+
+🤝 **Professional Network**:
+• Connect with a passionate Software Developer
+• View detailed work experience and achievements
+• See recommendations from colleagues
+• Discover shared professional interests
+
+📈 **Career Journey**:
+• Master's in Computer Science from UT Arlington
+• Security-focused development experience
+• AI and full-stack development expertise
+
+🎯 **Let's connect and grow our professional network together!**
+
+*Opening in 1 second...*`;
+    },
+    email: () => {
+        setTimeout(() => {
+            window.location.href = 'mailto:puppalahemasri23@gmail.com?subject=Hello Hema! - From Your Portfolio&body=Hi Hema,%0D%0A%0D%0AI visited your portfolio website and would love to connect.%0D%0A%0D%0A[Your message here]%0D%0A%0D%0ABest regards,';
+        }, 1000);
+        return `✉️ **Opening Email Client!**
+
+📨 **Getting ready to compose an email to Hema**:
+
+📧 **To**: puppalahemasri23@gmail.com
+📝 **Subject**: Hello Hema! - From Your Portfolio
+
+💡 **Email Tips**:
+• Introduce yourself and how you found her portfolio
+• Mention specific projects or skills that caught your attention
+• Be clear about collaboration opportunities or questions
+• Include your contact information
+
+🎯 **Perfect for**:
+• Job opportunities and collaborations
+• Project discussions and consultations
+• Technical questions and mentorship
+• Networking and professional connections
+
+*Opening your email client in 1 second...*`;
     },
     resume: () => {
         window.open('HemaSri_CV.pdf', '_blank');
@@ -115,22 +194,33 @@ Hema is always interested in new opportunities and exciting projects. Feel free 
     }
 };
 
+// Convert markdown-style formatting to HTML
+function formatMessageContent(content) {
+    return content
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // **bold** to <strong>
+        .replace(/\*(.*?)\*/g, '<em>$1</em>') // *italic* to <em>
+        .replace(/\n/g, '<br>') // line breaks
+        .replace(/• /g, '&bull; '); // bullet points
+}
+
 // Add message to floating chat
 function addFloatingMessage(content, isBot = false) {
     const messageDiv = document.createElement('div');
     messageDiv.className = `floating-message ${isBot ? 'bot-message' : 'user-message'}`;
     
+    const formattedContent = isBot ? formatMessageContent(content) : content;
+    
     if (isBot) {
         messageDiv.innerHTML = `
             <span class="floating-message-avatar">🤖</span>
             <div class="floating-message-content">
-                <p>${content}</p>
+                <div>${formattedContent}</div>
             </div>
         `;
     } else {
         messageDiv.innerHTML = `
             <div class="floating-message-content">
-                <p>${content}</p>
+                <div>${formattedContent}</div>
             </div>
             <span class="floating-message-avatar">👤</span>
         `;
@@ -155,26 +245,39 @@ function handleFloatingChatInput() {
     
     if (lowerInput.includes('help') || lowerInput.includes('what can you do')) {
         response = chatResponses.help();
+    } else if (lowerInput === 'github' || lowerInput.includes('github profile') || lowerInput.includes('visit github')) {
+        response = chatResponses.github();
+    } else if (lowerInput === 'linkedin' || lowerInput.includes('linkedin profile') || lowerInput.includes('connect linkedin')) {
+        response = chatResponses.linkedin();
+    } else if (lowerInput === 'email' || lowerInput.includes('send email') || lowerInput.includes('compose email')) {
+        response = chatResponses.email();
     } else if (lowerInput.includes('about') || lowerInput.includes('who is hema') || lowerInput.includes('background')) {
         response = chatResponses.about();
     } else if (lowerInput.includes('skill') || lowerInput.includes('technology') || lowerInput.includes('technical')) {
         response = chatResponses.skills();
     } else if (lowerInput.includes('project') || lowerInput.includes('work') || lowerInput.includes('portfolio')) {
         response = chatResponses.projects();
-    } else if (lowerInput.includes('contact') || lowerInput.includes('reach') || lowerInput.includes('email') || lowerInput.includes('phone')) {
+    } else if (lowerInput.includes('contact') || lowerInput.includes('reach') || lowerInput.includes('phone')) {
         response = chatResponses.contact();
     } else if (lowerInput.includes('resume') || lowerInput.includes('cv')) {
         response = chatResponses.resume();
     } else if (lowerInput.includes('hello') || lowerInput.includes('hi') || lowerInput.includes('hey')) {
-        response = `Hello! 👋 I'm Hema's AI assistant. I'm here to help you learn about her background, skills, and experience. What would you like to know?`;
+        response = `Hello! 👋 I'm Hema's AI assistant. I'm here to help you learn about her background, skills, and experience. 
+
+💡 **Quick Actions**: Try typing **github**, **linkedin**, or **email** for instant connections!
+
+What would you like to know?`;
     } else {
         response = `I'm not sure about that specific question, but I can help you with:
 
 • Learning about Hema's background and experience
-• Exploring her technical skills and expertise
+• Exploring her technical skills and expertise  
 • Discovering her featured projects
 • Getting her contact information
 • Viewing her resume
+• **github** - Visit her GitHub profile 🚀
+• **linkedin** - Connect on LinkedIn 💼
+• **email** - Send her an email ✉️
 
 What would you like to know about?`;
     }
